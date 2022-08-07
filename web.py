@@ -116,7 +116,7 @@ else:
     a=pd.DataFrame(a)
 
     # write min. days
-    if a[a<0].index[-1]>= int(len(hist)/2)-101:
+    if len(a[a<0].dropna())>= int(len(hist)/2)-100:
         st.metric('Min. days to avoid losses', '+∞')
     else:
         st.metric('Min. days to avoid losses', len(a[a<0].dropna()))
