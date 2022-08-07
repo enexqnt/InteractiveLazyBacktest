@@ -8,7 +8,7 @@ import seaborn as sns
 st.title('Lazy portfolio backtester')
 
 
-n_stocks=st.slider('Inserisci il numero di asset: ',min_value=2,max_value=12)
+n_stocks=st.slider('Select the number of assets: ',min_value=2,max_value=12)
 
 
 ##############################
@@ -26,7 +26,7 @@ for i in range(0,n_stocks):
 # TICKERS OF ASSETS
 ##############################
 for k, v in tickers.items():
-    tickers[k] = st.text_input('Asset number: ' +str(k))
+    tickers[k] = st.text_input('Ticker of asset number: ' +str(k), help='Insert the ticker in yahoo finance format',placeholder='WLD.MI')
     st.write(tickers[k])
 
 ##############################
@@ -35,7 +35,7 @@ for k, v in tickers.items():
 tickers=list(tickers.values())
 tickers.sort()
 
-data=yf.download(tickers,interval='1d')[['Adj Close']]
+data=yf.download(tickers,interval='1d')['Adj Close']
 data.dropna(inplace=True)
 
 
@@ -48,16 +48,17 @@ cumrets=(rets+1).cumprod()
 import matplotlib.pyplot as plt
 fig = plt.figure()
 plt.plot(cumrets)
+plt.legend(loc="upper left")
 st.pyplot(fig)
 
 
 ##############################
 ## WEIGHTS 
 ##############################
-st.subheader('Specifica i pesi di portafoglio')
+st.subheader('Define weights of the portfolio')
 
 for k, v in weights.items():
-    weights[k] = st.text_input('Weights of asset number: ' +str(k))
+    weights[k] = st.text_input(tickers[k]+' weight:',placeholder=0.5)
     st.write(weights[k])
 
 weights=list(weights.values())
@@ -76,8 +77,10 @@ plt.plot(hist)
 plt.title('Rendimento cumulato storico del portafoglio')
 st.pyplot(fig)
 
-# Drawdown
-dd=hist-hist.cummax()
+##############################
+## DRAWDOWN & other metrics
+##############################
+dd=(hist-hist.cummax())
 fig = plt.figure()
 plt.plot(dd)
 plt.title('Drawdown storico del portafoglio')
@@ -86,10 +89,38 @@ st.pyplot(fig)
 cagr=hist.mean()**(252/len(hist))-1
 std=hist.pct_change().dropna().std()*(252**0.5)
 sharpe=cagr/std
-st.write('CAGR: '+str("{:.2%}".format(cagr)))
-st.write('STD: '+str("{:.2%}".format(std)))
-st.write('Sharpe ratio: '+str("{:.2%}".format(sharpe)))
-st.write('Max Drawdown: '+str("{:.2%}".format(dd.min())))
+col1, col2, col3, col4 = st.columns(4)
+col1.metric('CAGR',str("{:.2%}".format(cagr)))
+col2.metric('STD',str("{:.2%}".format(std)))
+col3.metric('Sharpe ratio',str("{:.2f}".format(sharpe)))
+col4.metric('Max Drawdown',str("{:.2%}".format(dd.min())))
+
+##############################
+## HIST MAX LOSS AFTER X DAYS
+##############################
+st.subheader('Minimum days to avoid losses')
+
+# create data
+a=[]
+for i in range(100, int(len(hist)/2)):
+    a.append((((hist.shift(-i)/hist).dropna()-1).cummin().min()))
+a=pd.DataFrame(a)
+
+# write min. days
+if a[a<0].index[-1]>= int(len(hist)/2)-101:
+    st.metric('Min. days to avoid losses', '+∞')
+else:
+    st.metric('Min. days to avoid losses', len(a[a<0].dropna()))
+
+# Plot
+fig = plt.figure()
+plt.plot(a,color='black')
+plt.axhline(0)
+plt.title('Max. loss after x days - Historical analysis')
+st.pyplot(fig)
+
+
+
 
 ##############################
 ## MONTE CARLO
@@ -97,8 +128,8 @@ st.write('Max Drawdown: '+str("{:.2%}".format(dd.min())))
 st.header('Monte Carlo Simulation')
 
 #Input
-n_mc=st.slider('Inserisci il numero di simulazioni: ',min_value=100,max_value=1000)
-n_t=st.slider('Inserisci il numero di giorni: ',min_value=5,max_value=250)
+n_mc=st.slider('Define the number of simulations: ',min_value=100,max_value=1000)
+n_t=st.slider('Define the number of days for the simulations: ',min_value=5,max_value=250)
 
 # Mean and cov computation
 mu_df=pd.DataFrame(rets.mean())
@@ -147,7 +178,7 @@ with sns.color_palette("winter"):
 plt.plot(hist['2022':])
 
 # Plot trend lines
-plt.plot(hist[-1]*trend(np.quantile(portf_returns[-1],q=0.99)),color='black', label='99% probabilità')
+plt.plot(hist[-1]*trend(np.quantile(portf_returns[-1],q=0.99)),color='black', label='99% probability')
 plt.plot(hist[-1]*trend(np.quantile(portf_returns[-1],q=0.01)),color='black',)
 plt.plot(hist[-1]*trend(np.quantile(portf_returns[-1],q=0.5)),color='white')
 
@@ -155,9 +186,11 @@ plt.plot(hist[-1]*trend(np.quantile(portf_returns[-1],q=0.5)),color='white')
 st.pyplot(f)
 
 # Write some stats
-st.write('In 99/100 casi non dovresti perdere più del ' +str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.01)-1))))
-st.write('In 99/100 casi non dovresti guadagnare più del ' +str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.99)-1))))
-st.write('Il rendimento medio simulato è pari al ' +str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.5)-1))))
+st.write('Forecasted returns')
+col1, col2, col3 = st.columns(3)
+col1.metric('Maximum loss',str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.01)-1))))
+col2.metric('Maximum profit', str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.99)-1))))
+col3.metric('Average return after '+str(n_t)+' days',str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.5)-1))))
 
 
 
