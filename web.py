@@ -77,13 +77,13 @@ else:
     ##############################
     ## HIST PORTFOLIO ANALYSIS 
     ##############################
-    st.header('Analisi storica')
+    st.header('Historical analysis')
 
     # Rendimento cumulato
     hist=((rets@weights)+1).cumprod()
     fig = plt.figure()
     plt.plot(hist)
-    plt.title('Rendimento cumulato storico del portafoglio')
+    plt.title('Historical cumulated returns')
     st.pyplot(fig)
 
     ##############################
@@ -92,7 +92,7 @@ else:
     dd=(hist-hist.cummax())
     fig = plt.figure()
     plt.plot(dd)
-    plt.title('Drawdown storico del portafoglio')
+    plt.title('Historical Drawdown')
     st.pyplot(fig)
 
     cagr=hist.mean()**(252/len(hist))-1
