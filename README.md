@@ -8,5 +8,8 @@ You run the project via [this link](https://enexqnt-interactivelazybacktest-web-
 
  * [x] Historical Returns
  * [x] Basic Monte Carlo
- * [ ] GJR-GARCH integration for volatility prediction
- * [ ] Drawdowns lenght
+ * [X] Drawdowns lenght
+ * [X] Historical Sharpe ratio
+ * [ ] Historical Sortino ratio
+ * [ ] Simulated efficient frontier
+ * [ ] Improve GUI and functionality
