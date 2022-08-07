@@ -5,12 +5,11 @@ import numpy as np
 import yfinance as yf
 from datetime import datetime, timedelta
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 st.title('Lazy portfolio backtester')
 
-
 n_stocks=st.slider('Select the number of assets: ',min_value=2,max_value=12)
-
 
 ##############################
 # DICTIONARY FOR INPUT
@@ -22,6 +21,17 @@ for i in range(0,n_stocks):
 weights={}
 for i in range(0,n_stocks):
      weights[i] = int(1)
+
+
+##############################
+# PLOT FUNCTION
+##############################
+def plot_g(data,title=None):
+    fig = plt.figure()
+    plt.plot(data)
+    plt.title(title)
+    st.pyplot(fig)
+
 
 ##############################
 # TICKERS OF ASSETS
@@ -46,11 +56,9 @@ data.dropna(inplace=True)
 rets=data.pct_change().dropna()
 cumrets=(rets+1).cumprod()
 
-import matplotlib.pyplot as plt
-fig = plt.figure()
-plt.plot(cumrets)
-plt.legend(loc="upper left")
-st.pyplot(fig)
+
+
+plot_g(cumrets,'Cumulative returns')
 
 
 ##############################
@@ -81,19 +89,13 @@ else:
 
     # Rendimento cumulato
     hist=((rets@weights)+1).cumprod()
-    fig = plt.figure()
-    plt.plot(hist)
-    plt.title('Historical cumulated returns')
-    st.pyplot(fig)
+    plot_g(hist,'Historical cumulative returns')
 
     ##############################
     ## DRAWDOWN & other metrics
     ##############################
     dd=(hist-hist.cummax())
-    fig = plt.figure()
-    plt.plot(dd)
-    plt.title('Historical Drawdown')
-    st.pyplot(fig)
+    plot_g(dd,'Historical Drawdown')
 
     cagr=hist.mean()**(252/len(hist))-1
     std=hist.pct_change().dropna().std()*(252**0.5)
@@ -138,7 +140,7 @@ else:
 
     #Input
     n_mc=st.slider('Define the number of simulations: ',min_value=100,max_value=1000)
-    n_t=st.slider('Define the number of days for the simulations: ',min_value=5,max_value=250)
+    n_t=st.slider('Define the number of days for the simulations: ',min_value=20,max_value=250)
 
     # Mean and cov computation
     mu_df=pd.DataFrame(rets.mean())
@@ -197,10 +199,13 @@ else:
     # Write some stats
     st.write('Forecasted returns')
     col1, col2, col3 = st.columns(3)
-    col1.metric('Maximum loss',str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.01)-1))))
-    col2.metric('Maximum profit', str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.99)-1))))
+    col1.metric('Maximum loss - Probability 99%',str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.01)-1))))
+    col2.metric('Maximum profit - Probability 99%', str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.99)-1))))
     col3.metric('Average return after '+str(n_t)+' days',str("{:.2%}".format((np.quantile(portf_returns[-1],q=0.5)-1))))
 
+    col1, col2= st.columns(2)
+    col1.metric('Worst realization',str("{:.2%}".format(portf_returns.min()-1)))
+    col2.metric('Best realization',str("{:.2%}".format(portf_returns.max()-1)))
 
 
 
