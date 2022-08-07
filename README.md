@@ -8,7 +8,7 @@ You run the project via [this link](https://enexqnt-interactivelazybacktest-web-
 
  * [x] Historical Returns
  * [x] Basic Monte Carlo
- * [X] Drawdowns lenght
+ * [X] Minimum investment horizon
  * [X] Historical Sharpe ratio
  * [ ] Robust covariance estimation methods
  * [ ] Pre-defined lazy portfolios
