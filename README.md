@@ -4,7 +4,7 @@ Interactive backtest and Monte Carlo simulation for lazy portfolios (currently i
 
 You run the project via [this link](https://enexqnt-interactivelazybacktest-web-13fjcw.streamlitapp.com/)
 
-## Widgets / web components:
+## Roadmap:
 
  * [x] Historical Returns
  * [x] Basic Monte Carlo
