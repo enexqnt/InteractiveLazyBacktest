@@ -143,19 +143,19 @@ else:
     #Input
     n_mc=st.slider('Define the number of simulations: ',min_value=100,max_value=1000)
     n_t=st.slider('Define the number of days for the simulations: ',min_value=20,max_value=250)
-
+    
     # Mean and cov computation
     mu_df=estimation.mean_historical_return(data,frequency=1)
+    meanM = np.full(shape=(n_t, len(weights)), fill_value=mu_df).T
+
     portf_returns = np.full((n_t,n_mc),0.)
     cov=estimation.CovMatrix(rets)
 
-    # Loop for simulations
     for i in range(0,n_mc):
-        Z = np.random.standard_t(n_t,size=len(tickers)*n_t)
-        Z = Z.reshape((len(tickers),n_t))
-        L = scipy.linalg.lu(cov)[1]
-        wkrets=np.inner(L,np.transpose(Z))+np.array(mu_df)
-        portf_r = np.cumprod(np.inner(weights,np.transpose(wkrets)) + 1)
+        Z = np.random.standard_t(12,size=(n_t, len(weights)))#uncorrelated RV's
+        L = scipy.linalg.lu(cov)[1] #Cholesky decomposition to Lower Triangular Matrix
+        dailyReturns = meanM + np.inner(L,Z) #Correlated daily returns for individual stocks
+        portf_r = np.cumprod(np.inner(weights,np.transpose(dailyReturns)) + 1)
         future_dates = [rets.index[-1] + timedelta(days=x) for x in range(0,n_t+1)]
         portf_returns[:,i] = portf_r
 
