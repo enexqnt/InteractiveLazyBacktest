@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import seaborn as sns
 import matplotlib.pyplot as plt
 import estimation
+import scipy
 
 st.title('Lazy portfolio backtester')
 
