@@ -97,7 +97,7 @@ else:
     dd=(hist-hist.cummax())
     plot_g(dd,'Historical Drawdown')
 
-    cagr=hist.mean()**(252/len(hist))-1
+    cagr=estimation.mean_historical_return(hist,returns_data=True)
     std=hist.pct_change().dropna().std()*(252**0.5)
     sharpe=cagr/std
     col1, col2, col3, col4 = st.columns(4)
@@ -145,7 +145,7 @@ else:
     # Mean and cov computation
     mu_df=pd.DataFrame(rets.mean())
     portf_returns = np.full((n_t,n_mc),0.)
-    cov=rets.cov()
+    cov=estimation.CovMatrix(rets)
 
     # Loop for simulations
     for i in range(0,n_mc):
