@@ -98,7 +98,7 @@ else:
     dd=(hist-hist.cummax())
     plot_g(dd,'Historical Drawdown')
 
-    cagr=estimation.mean_historical_return(hist,returns_data=True)
+    cagr=estimation.mean_historical_return(hist)
     std=hist.pct_change().dropna().std()*(252**0.5)
     sharpe=cagr/std
     col1, col2, col3, col4 = st.columns(4)
