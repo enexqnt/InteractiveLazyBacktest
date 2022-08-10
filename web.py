@@ -152,7 +152,7 @@ else:
     for i in range(0,n_mc):
         Z = np.random.standard_t(n_t,size=len(tickers)*n_t)
         Z = Z.reshape((len(tickers),n_t))
-        L = np.linalg.cholesky(cov)
+        L = np.linalg.ludecomp(cov)
         wkrets=np.inner(L,np.transpose(Z))+np.array(mu_df)
         portf_r = np.cumprod(np.inner(weights,np.transpose(wkrets)) + 1)
         future_dates = [rets.index[-1] + timedelta(days=x) for x in range(0,n_t+1)]
