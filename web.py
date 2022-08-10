@@ -149,7 +149,7 @@ else:
     meanM = np.full(shape=(n_t, len(weights)), fill_value=mu_df).T
 
     portf_returns = np.full((n_t,n_mc),0.)
-    cov=estimation.CovMatrix(rets)
+    cov=estimation.CovMatrix(rets)**np.sqrt(252)
 
     for i in range(0,n_mc):
         Z = np.random.standard_t(3,size=(n_t, len(weights)))#uncorrelated RV's
