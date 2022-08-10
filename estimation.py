@@ -3,6 +3,7 @@ import numpy as np
 from scipy.optimize import minimize
 from sklearn.neighbors import KernelDensity
 
+
 def returns_from_prices(prices, log_returns=False):
     if log_returns:
         returns = np.log(1 + prices.pct_change()).dropna(how="all")
@@ -23,9 +24,9 @@ def mean_historical_return(
     prices, returns_data=False, compounding=True, frequency=252, log_returns=False
 ):
     if returns_data:
-        returns = prices
+        returns = prices.dropna()
     else:
-        returns = returns_from_prices(prices, log_returns)
+        returns = returns_from_prices(prices, log_returns).dropna()
 
     if compounding:
         return (1 + returns).prod() ** (frequency / returns.count()) - 1
