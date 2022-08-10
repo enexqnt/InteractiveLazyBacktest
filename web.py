@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import seaborn as sns
 import matplotlib.pyplot as plt
 import estimation
+import scipy
 
 st.title('Lazy portfolio backtester')
 
@@ -152,7 +153,7 @@ else:
     for i in range(0,n_mc):
         Z = np.random.standard_t(n_t,size=len(tickers)*n_t)
         Z = Z.reshape((len(tickers),n_t))
-        L = np.linalg.ludecomp(cov)
+        L = scipy.linalg.lu(cov)
         wkrets=np.inner(L,np.transpose(Z))+np.array(mu_df)
         portf_r = np.cumprod(np.inner(weights,np.transpose(wkrets)) + 1)
         future_dates = [rets.index[-1] + timedelta(days=x) for x in range(0,n_t+1)]
