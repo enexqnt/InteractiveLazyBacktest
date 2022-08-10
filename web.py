@@ -6,7 +6,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import seaborn as sns
 import matplotlib.pyplot as plt
-import estimat
+import estimation
 
 st.title('Lazy portfolio backtester')
 
