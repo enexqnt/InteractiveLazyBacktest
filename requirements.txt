@@ -1,4 +1,3 @@
 yfinance
 seaborn
 sklearn
-warnings
