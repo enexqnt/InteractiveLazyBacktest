@@ -6,7 +6,7 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import seaborn as sns
 import matplotlib.pyplot as plt
-import estimation
+import estimat
 
 st.title('Lazy portfolio backtester')
 
@@ -144,7 +144,7 @@ else:
     n_t=st.slider('Define the number of days for the simulations: ',min_value=20,max_value=250)
 
     # Mean and cov computation
-    mu_df=pd.DataFrame(rets.mean())
+    mu_df=estimation.mean_historical_return(data,frequency=1)
     portf_returns = np.full((n_t,n_mc),0.)
     cov=estimation.CovMatrix(rets)
 
