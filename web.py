@@ -147,13 +147,15 @@ else:
     # Mean and cov computation
     mu_df=estimation.mean_historical_return(data,frequency=1)
     meanM = np.full(shape=(n_t, len(weights)), fill_value=mu_df).T
-
     portf_returns = np.full((n_t,n_mc),0.)
-    cov=estimation.CovMatrix(rets)*np.sqrt(252)
+    try:
+        cov=estimation.CovMatrix(rets)
+        L = np.linalg.cholesky(cov)
+    except:
+        cov=rets.cov()
 
     for i in range(0,n_mc):
-        Z = np.random.standard_t(3,size=(n_t, len(weights)))#uncorrelated RV's
-        L = np.linalg.cholesky(cov) #Cholesky decomposition to Lower Triangular Matrix
+        Z = np.random.standard_t(12,size=(n_t, len(weights)))#uncorrelated RV's
         dailyReturns = meanM + np.inner(L,Z) #Correlated daily returns for individual stocks
         portf_r = np.cumprod(np.inner(weights,np.transpose(dailyReturns)) + 1)
         future_dates = [rets.index[-1] + timedelta(days=x) for x in range(0,n_t+1)]
