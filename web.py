@@ -153,6 +153,7 @@ else:
         L = np.linalg.cholesky(cov)
     except:
         cov=rets.cov()
+        L = np.linalg.cholesky(cov)
 
     for i in range(0,n_mc):
         Z = np.random.standard_t(12,size=(n_t, len(weights)))#uncorrelated RV's
