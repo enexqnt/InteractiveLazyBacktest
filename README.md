@@ -10,7 +10,7 @@ You can run the code via [this link](https://enexqnt-interactivelazybacktest-web
  * [x] Basic Monte Carlo
  * [X] Minimum investment horizon
  * [X] Historical Sharpe ratio
- * [ ] Robust covariance estimation methods
+ * [X] Robust covariance estimation method
  * [ ] Pre-defined lazy portfolios
  * [ ] Historical Sortino ratio
  * [ ] Simulated efficient frontier
