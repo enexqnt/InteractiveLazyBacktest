@@ -22,11 +22,6 @@ def prices_from_returns(returns, log_returns=False):
 def mean_historical_return(
     prices, returns_data=False, compounding=True, frequency=252, log_returns=False
 ):
-
-    if not isinstance(prices, pd.DataFrame):
-        warnings.warn("prices are not in a dataframe", RuntimeWarning)
-        prices = pd.DataFrame(prices)
-
     if returns_data:
         returns = prices
     else:
