@@ -153,7 +153,7 @@ else:
 
     for i in range(0,n_mc):
         Z = np.random.standard_t(3,size=(n_t, len(weights)))#uncorrelated RV's
-        L = scipy.linalg.lu(cov)[2] #Cholesky decomposition to Lower Triangular Matrix
+        L = np.linalg.cholesky(cov) #Cholesky decomposition to Lower Triangular Matrix
         dailyReturns = meanM + np.inner(L,Z) #Correlated daily returns for individual stocks
         portf_r = np.cumprod(np.inner(weights,np.transpose(dailyReturns)) + 1)
         future_dates = [rets.index[-1] + timedelta(days=x) for x in range(0,n_t+1)]
